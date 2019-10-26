@@ -3,12 +3,7 @@ import ctypes
 import sys
 import sublime
 
-libs = {
-    "win32": "win_lc.so",
-    "linux":  "linux_lc.so",
-    "darwin": "osx_lc.so",
-    "cygwin":  "linux_lc.so"
-}
+from .build import libs
 
 # Try to locate the .so file in the same directory as this file
 _file = "shared-object/" + libs[sys.platform]

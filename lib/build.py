@@ -2,10 +2,10 @@ import sys
 import os
 
 libs = {
-    "win32": "win_lc.so",
-    "linux":  "linux_lc.so",
     "darwin": "osx_lc.so",
-    "cygwin":  "linux_lc.so"
+    "win32": "win32_lc.so",
+    "linux":  "linux_lc.so",
+    "cygwin":  "cygwin_lc.so"
 }
 
 if sys.platform in libs:
