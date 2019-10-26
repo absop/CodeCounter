@@ -1,6 +1,6 @@
 {
     // encoding for os file path
-    "encoding": "gbk",
+    "encoding": "utf-8",
 
     "extensions": {
         "Assembly": ["s", "S"],
