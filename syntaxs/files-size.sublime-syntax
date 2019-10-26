@@ -1,0 +1,48 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+scope: text.files-size
+
+contexts:
+  main:
+    - include: rootdir
+    - include: total
+    - include: contains
+
+  rootdir:
+    - match: (ROOTDIR)(:)\s+((\w:)?([^\"\n:|*<?>])+)$
+      captures:
+        1: keyword.declaration.files-size
+        2: punctuation.separator.files-size
+        3: rootdir.path.files-size
+
+    - match: (PATH)(:)\s+((\w:)?([^\"\n:|*<?>])+)$
+      captures:
+        1: keyword.declaration.files-size
+        2: punctuation.separator.files-size
+        3: filename.path.files-size
+
+  total:
+    - match: (TotalSize|Size)(:)\s*([0-9]+(\.[0-9]+)?)(B|KB|MB|GB)(\()\s*([0-9]+)\s*(Bytes)(\))$
+      captures:
+        1: entity.name.tag.files-size
+        2: punctuation.separator.files-size
+        6: punctuation.separator.files-size
+        9: punctuation.separator.files-size
+        3: constant.numeric.files-size
+        7: constant.numeric.files-size
+        5: string.unit.count-files
+        8: string.unit.count-files
+
+  contains:
+    - match: (Contains)(:)\s*(Files)(:)\s*([0-9]+)\s*(,)\s*(Folders)(:)\s*([0-9]+)
+      captures:
+        1: entity.name.tag.files-size
+        3: entity.other.attribute-name.files-size
+        7: entity.other.attribute-name.files-size
+        5: constant.numeric.files-size
+        9: constant.numeric.files-size
+        2: punctuation.separator.files-size
+        4: punctuation.separator.files-size
+        6: punctuation.separator.files-size
+        8: punctuation.separator.files-size

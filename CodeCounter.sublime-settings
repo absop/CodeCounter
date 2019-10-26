@@ -1,0 +1,44 @@
+{
+    // encoding for os file path
+    "encoding": "gbk",
+
+    "extensions": {
+        "Assembly": ["s", "S"],
+        "C": ["c"],
+        "C++": ["c++", "cpp", "cc"],
+        "C or C++ Header File": ["h"],
+        "CSS": ["css"],
+        "EJS": ["ejs"],
+        "Go": ["go"],
+        "Haskell": ["hs"],
+        "HTML": ["html", "htm", "HTML", "HTM"],
+        "Java": ["java"],
+        "JavaScript": ["js"],
+        "JSON": [
+        	"json",
+        	"sublime-color-scheme",
+        	"sublime-commands",
+        	"sublime-keymap",
+            "sublime-menu",
+        	"sublime-settings",
+        	"sublime-theme"
+        ],
+        "Julia": ["jl"],
+        "Latex": ["tex"],
+        "Lisp": ["lisp", "cl", "clisp", "el", "lsp", "fasl"],
+        "Lua": ["lua"],
+        "Makefile": ["make", "mak"],
+        "Markdown": ["md", "mdown", "markdown", "markdn"],
+        "Matlab": ["m", "matlab"],
+        "PHP": ["php"],
+        "Python": ["py"],
+        "R": ["r"],
+        "Ruby": ["rb"],
+        "Scala": ["scala", "sbt", "sc"],
+        "Scheme": ["ss", "scm"],
+        "YAML": ["sublime-syntax"]
+    },
+    "fullnames": {
+        "Makefile": ["Makefile"]
+    }
+}

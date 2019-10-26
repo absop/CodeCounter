@@ -1,0 +1,14 @@
+[
+	{
+		"caption": "Files Size",
+		"command": "side_bar_files_size",
+		"args": {"paths": []}
+	},
+	{
+		// Separate by Semicolon
+		"caption": "Code Counter",
+		"command": "side_bar_code_counter",
+		"args": {"paths": []}
+	},
+	{"caption": "-"}
+]

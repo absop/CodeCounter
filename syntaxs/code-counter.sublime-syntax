@@ -1,0 +1,70 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+scope: text.code-counter
+
+contexts:
+  main:
+    - include: header
+    - include: thread
+    - include: items
+    - include: total
+    - include: special-name
+    - include: paths
+
+  header:
+    - match: (ROOTDIR)(:)(\s+((\w:)?([^\"\n:|*<?>])+))?$
+      captures:
+        1: keyword.rootdir.code-counter
+        2: punctuation.separator.code-counter
+        3: variable.path.code-counter
+
+    - match: (Time)(:)\s*([0-9/:]+)
+      captures:
+        1: keyword.time.code-counter
+        2: punctuation.separator.code-counter
+        3: string.time.code-counter
+
+    - match: (Languages|Size|Files|Lines|Total|Types|Relative Path)
+      captures:
+        1: keyword.title.code-counter
+
+  thread:
+    - match: ([_]+)$
+      captures:
+        1: thread.header.code-counter
+
+  items:
+    - match: (((?!Total)[A-Za-z0-9_+-]+\s*)+)\|\s*([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s*([0-9]+)
+      captures:
+        1: variable.name.language.code-counter
+        3: constant.numeric.code-counter
+        4: string.unit.code-counter
+        5: constant.numeric.code-counter
+        6: constant.numeric.code-counter
+
+  total:
+    - match: ([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s*([0-9]+)
+      captures:
+        1: constant.numeric.code-counter
+        2: string.unit.code-counter
+        3: constant.numeric.code-counter
+        4: constant.numeric.code-counter
+
+  special-name:
+    - match: (((?!Total)[A-Za-z0-9_+-]+\s*)+)\|\s*([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s*([0-9]+)
+      captures:
+        1: entity.name.tag.filetype.code-counter
+        3: constant.numeric.code-counter
+        4: string.unit.code-counter
+        5: constant.numeric.code-counter
+        6: constant.numeric.code-counter
+
+  paths:
+    - match: ^\s*([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s+((\w:)?([^\"\n:|*<?>])+)$
+      captures:
+        1: constant.numeric.code-counter
+        2: string.unit.code-counter
+        3: constant.numeric.code-counter
+        4: meta.path.code-counter
+
