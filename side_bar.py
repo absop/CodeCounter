@@ -64,11 +64,17 @@ class SideBarCodeCounterCommand(sublime_plugin.WindowCommand):
         return len(paths) == 1 and os.path.isdir(paths[0])
 
     def run(self, paths):
-        window = self.window
-        rootdir = paths[0]
-        ctime = time.strftime("%Y/%m/%d/%H:%M")
-        settings = sublime.load_settings("CodeCounter.sublime-settings")
-        CodeCounterViewsManager.do_count(window, rootdir, ctime, settings)
+        CodeCounterViewsManager.do_count(paths[0])
+
+
+class CodeCounterCountDirCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        path = self.window.active_view().file_name() or "untitled"
+        v = self.window.show_input_panel(
+            "Path", path,
+            CodeCounterViewsManager.do_count, None, None)
+        v.sel().clear()
+        v.sel().add(sublime.Region(0, len(path)))
 
 
 class CodeCounterDetailLanguageCommand(sublime_plugin.TextCommand):
@@ -114,7 +120,7 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         return False
 
     @classmethod
-    def do_count(cls, window, rootdir, ctime, settings):
+    def do_count(cls, rootdir):
         def store_path(lang_first, type_second, path):
             """ data structure layout:
             {
@@ -157,6 +163,14 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
 
             lang_storage[3][type_second].append((relpath, nlines, fsize))
 
+        def handle_file(file, path):
+            if file in cls.language_fullnames:
+                store_path(cls.language_fullnames[file], file, path)
+            else:
+                ext = os.path.splitext(file)[1].lstrip(".")
+                if ext in cls.language_extensions:
+                    store_path(cls.language_extensions[ext], ext, path)
+
         def walk_dir(dir):
             for file in sorted(os.listdir(dir)):
                 path = os.path.join(dir, file)
@@ -164,20 +178,23 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
                     continue
                 if os.path.isdir(path):
                     walk_dir(path)
-                elif file in cls.language_fullnames:
-                    store_path(cls.language_fullnames[file], file, path)
                 else:
-                    name, ext = os.path.splitext(file)
-                    ext = ext.lstrip(".")
-                    if ext in cls.language_extensions:
-                        store_path(cls.language_extensions[ext], ext, path)
+                    handle_file(file, path)
 
 
         counting_tree = {}
+        window = sublime.active_window()
+        ctime = time.strftime("%Y/%m/%d/%H:%M")
 
         def threading_counting():
-            walk_dir(rootdir)
-            cls.overview(window, rootdir, ctime, counting_tree)
+            try:
+                if os.path.isdir(rootdir):
+                    walk_dir(rootdir)
+                else:
+                    handle_file(os.path.split(rootdir)[1], rootdir)
+                cls.overview(window, rootdir, ctime, counting_tree)
+            except Exception as e:
+                Loger.error(str(e))
 
         if cls.language_extensions or cls.language_fullnames:
             Loger.threading(threading_counting,

@@ -10,5 +10,9 @@
     {
         "caption": "CodeCounter: toggle log",
         "command": "code_counter_toggle_log",
+    },
+    {
+        "caption": "CodeCounter: count dir",
+        "command": "code_counter_count_dir",
     }
 ]
