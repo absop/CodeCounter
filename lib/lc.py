@@ -3,10 +3,10 @@ import ctypes
 import sys
 import sublime
 
-from .build import libs
+from .libs import object_files
 
 # Try to locate the .so file in the same directory as this file
-_file = "shared-object/" + libs[sys.platform]
+_file = "shared-object/" + object_files[sys.platform]
 _path = os.path.join(*(os.path.split(__file__)[:-1] + (_file,)))
 _module = ctypes.cdll.LoadLibrary(_path)
 
