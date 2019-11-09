@@ -1,3 +1,4 @@
+import re
 import os
 import time
 
@@ -59,22 +60,70 @@ class SideBarFilesSizeCommand(sublime_plugin.WindowCommand):
         return info
 
 
-class SideBarCodeCounterCommand(sublime_plugin.WindowCommand):
+class CodeCounterCountDirCommand(sublime_plugin.WindowCommand):
+    def show_input_panel(self, caption, initial_text, on_done):
+        v = self.window.show_input_panel(
+            caption, initial_text, on_done, None, None)
+        v.sel().clear()
+        v.sel().add(sublime.Region(0, len(initial_text)))
+
+    def accept_path(self, rootdir):
+        def gen_regex(pattern):
+            regex, needp = str(), False
+            for c in pattern.strip(';'):
+                if c in '$^?.+\\()[]':
+                    regex += '\\' + c
+                elif c == ';':
+                    regex += '|'
+                    needp = True
+                elif c == '*':
+                    regex += '.*'
+                else:
+                    regex += c
+            if sublime.platform() == "windows":
+                regex = regex.replace("/", "\\\\")
+
+            return "(%s)" % regex if needp else regex
+
+        def accept_regex(pattern):
+            try:
+                pattern = pattern and gen_regex(pattern)
+                Loger.print("pattern = '%s'"% (pattern))
+                regex = pattern and re.compile(pattern)
+            except:
+                Loger.error("Invalid pattern")
+                return
+            filter = lambda x: not regex.search(x) if regex else lambda x: True
+            CodeCounterViewsManager.do_count(rootdir, filter)
+
+        return accept_regex
+
+    def run(self):
+        self.show_input_panel("Path",
+            self.window.active_view().file_name() or "untitled",
+            lambda x: self.accept_path(x)(None))
+
+
+class CodeCounterCountDirFilteredCommand(CodeCounterCountDirCommand):
+    def run(self):
+        self.show_input_panel("Path",
+            self.window.active_view().file_name() or "untitled",
+            lambda path: self.show_input_panel("Pattern", "",
+                lambda pattern: self.accept_path(path)(pattern)))
+
+
+class SideBarCodeCounterCommand(CodeCounterCountDirCommand):
     def is_visible(self, paths):
         return len(paths) == 1 and os.path.isdir(paths[0])
 
     def run(self, paths):
-        CodeCounterViewsManager.do_count(paths[0])
+        self.accept_path(paths[0])(None)
 
 
-class CodeCounterCountDirCommand(sublime_plugin.WindowCommand):
-    def run(self):
-        path = self.window.active_view().file_name() or "untitled"
-        v = self.window.show_input_panel(
-            "Path", path,
-            CodeCounterViewsManager.do_count, None, None)
-        v.sel().clear()
-        v.sel().add(sublime.Region(0, len(path)))
+class SideBarCodeCounterFilteredCommand(SideBarCodeCounterCommand):
+    def run(self, paths):
+        accept_regex = self.accept_path(paths[0])
+        self.show_input_panel("Pattern", "", accept_regex)
 
 
 class CodeCounterDetailLanguageCommand(sublime_plugin.TextCommand):
@@ -120,7 +169,7 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         return False
 
     @classmethod
-    def do_count(cls, rootdir):
+    def do_count(cls, rootdir, filter):
         def store_path(lang_first, type_second, path):
             """ data structure layout:
             {
@@ -174,7 +223,7 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         def walk_dir(dir):
             for file in sorted(os.listdir(dir)):
                 path = os.path.join(dir, file)
-                if not os.path.exists(path):
+                if not (os.path.exists(path) and filter(path)):
                     continue
                 if os.path.isdir(path):
                     walk_dir(path)

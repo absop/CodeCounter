@@ -5,9 +5,13 @@
 		"args": {"paths": []}
 	},
 	{
-		// Separate by Semicolon
 		"caption": "Code Counter",
 		"command": "side_bar_code_counter",
+		"args": {"paths": []}
+	},
+	{
+		"caption": "Code Counter Filtered",
+		"command": "side_bar_code_counter_filtered",
 		"args": {"paths": []}
 	},
 	{"caption": "-"}

@@ -1,0 +1,5 @@
+v1.5.0 (2019.11.09)
+------------------
+
+# Bug Fixs
+- Fixed `build.py`'s unnecessary running when each time sublime_text startup. Which runs GCC causes flashing of console.

@@ -1,0 +1,11 @@
+v2.0.0 (2019.11.10)
+------------------
+
+## New Features
+
+- Add an optional inputting of pattern to filter files when starting counting.
+  with two new adding item:
+  * Side Bar menu item `Code Counter Filtered`.
+  * command `CodeCounter: count dir filtered`.
+
+## Better docs

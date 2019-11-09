@@ -14,5 +14,9 @@
     {
         "caption": "CodeCounter: count dir",
         "command": "code_counter_count_dir",
+    },
+    {
+        "caption": "CodeCounter: count dir filtered",
+        "command": "code_counter_count_dir_filtered",
     }
 ]

@@ -1,0 +1,12 @@
+v1.0.0 (2019.11.06)
+------------------
+
+# Firse Release
+
+## Features
+- Side Bar Code Counting.
+- Side Bar File Size showing.
+- Counting directory or file using command "CodeCounter: count dir".
+- <kbd>o</kbd> or <kbd>Enter</kbd> open files.
+- <kbd>d</kbd> to show a detail counting information for a language.
+- mouse click showing.
