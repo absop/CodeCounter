@@ -36,7 +36,7 @@ Enter <kbd>ctrl+shift+p</kbd> to show a `command_palette` to input and run `subl
       ![Files size](image/files_size.png)
 
     * `Code Counter` shows you some statistic infomation of that folder. counting result is shown in a `View` as below.
-      ![Overview](image/Overview.png)
+      ![Overview](image/overview.png)
 
     * `Code Counter Filtered` is like `Code Counter`, but will request you to input a list of `pattern`(More on that later) before it works.
 

@@ -33,7 +33,7 @@
       ![Files size](image/files_size.png)
 
     * `Code Counter` 列出一个文件夹（或文件）的统计信息，结果显示在一个`View`中，如下图所示。
-      ![Overview](image/Overview.png)
+      ![Overview](image/overview.png)
 
     * `Code Counter Filtered` 像`Code Counter`一样， 只不过会在开始统计之前要求你输入一个`模式`（容稍后再详加解释）。
 
