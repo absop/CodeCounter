@@ -6,7 +6,7 @@ import sublime
 import sublime_plugin
 
 from .lib import Loger
-from .lib import lc
+from .lib import counter
 from .lib import strsize
 
 class CodeCounterToggleLogCommand(sublime_plugin.WindowCommand):
@@ -186,7 +186,7 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
             }
             """
             try:
-                nlines = lc.count(path)
+                nlines = counter.count(path)
             except:
                 nlines = 0
             try:
@@ -413,7 +413,7 @@ def configure_code_counter(settings):
     CodeCounterViewsManager.language_extensions = language_extensions
     CodeCounterViewsManager.language_fullnames = language_fullnames
 
-    lc.set_encoding(settings.get("encoding", 'utf-8'))
+    counter.set_encoding(settings.get("encoding", 'utf-8'))
 
 
 def plugin_loaded():
@@ -425,3 +425,8 @@ def plugin_loaded():
     settings.add_on_change("encoding", configure)
 
     configure()
+    counter.load_binary()
+
+
+def plugin_unloaded():
+    counter.unload_binary()
