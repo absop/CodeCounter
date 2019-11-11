@@ -1,5 +1,5 @@
-![License][license-image]
-
+[![License][license-image]](/LICENSE)
+[![Downloads][packagecontrol-image]][packagecontrol-link]
 
 # CodeCounter
 [中文](Chinese.md)
@@ -106,3 +106,5 @@ Other settings
 
 
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[packagecontrol-image]: https://img.shields.io/packagecontrol/dt/CodeCounter.svg
+[packagecontrol-link]: https://packagecontrol.io/packages/CodeCounter
