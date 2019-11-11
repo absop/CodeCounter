@@ -427,7 +427,7 @@ def plugin_loaded():
     def configure():
         try:
             configure_code_counter(settings)
-        except ValueError as e:
+        except TypeError as e:
             Loger.error(settings_error)
 
     settings.add_on_change("encoding", configure)
