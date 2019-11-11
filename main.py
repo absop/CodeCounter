@@ -416,11 +416,19 @@ def configure_code_counter(settings):
     counter.set_encoding(settings.get("encoding", 'utf-8'))
 
 
+settings_error = """
+There are some error in the process of loading settings.
+Please restart Sublime Text to make sure that settings are loaded properly.
+"""
+
 def plugin_loaded():
     settings = sublime.load_settings("CodeCounter.sublime-settings")
 
     def configure():
-        configure_code_counter(settings)
+        try:
+            configure_code_counter(settings)
+        except ValueError as e:
+            Loger.error(settings_error)
 
     settings.add_on_change("encoding", configure)
 
