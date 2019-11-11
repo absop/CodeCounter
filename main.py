@@ -423,12 +423,11 @@ Please restart Sublime Text to make sure that settings are loaded properly.
 
 def plugin_loaded():
     settings = sublime.load_settings("CodeCounter.sublime-settings")
+    if settings is None:
+        Loger.error(settings_error)
 
     def configure():
-        try:
-            configure_code_counter(settings)
-        except TypeError as e:
-            Loger.error(settings_error)
+        configure_code_counter(settings)
 
     settings.add_on_change("encoding", configure)
 
