@@ -1,0 +1,20 @@
+CodeCounter
+===========
+
+`CodeCounter` is a simple code statistic plugin for `SublimeText3`.
+It provides visualized statistic results of code for directorys or files.
+
+
+Usage
+-----
+### Sidebar Menu items
++ `Files Size` shows you some size informations for files or folders
++ `Code Counter` shows you some statistic infomations of of code under folders
++ `Code Counter Filtered` as above, but needs you input a pattern as a filter
+
+### Command Palette
+The following tow commands both begin with `CodeCounter:`, and do same jobs of the corresponding `sidebar menu items` above do, after you have inputed a file path.
++ `count dir`
++ `count dir filtered`
+
+More usage at <https://github.com/absop/CodeCounter>, contains operations of statistic results.
