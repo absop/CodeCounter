@@ -1,6 +1,3 @@
-CodeCounter
-===========
-
 `CodeCounter` is a simple code statistic plugin for `SublimeText3`.
 It provides visualized statistic results of code for directorys or files.
 
