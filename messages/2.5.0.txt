@@ -1,0 +1,6 @@
+v2.5.0 (2019.11.11)
+------------------
+
+# New
+- Fix some bugs occur in the process of plugin updating.
+- Now the plugin will be installed as a sublime-package
