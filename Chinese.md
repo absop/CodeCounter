@@ -98,7 +98,6 @@
 ## 问题
 - 双击语言名字总是会新建一个视图，即使存在一个之前打开的同样的视图。
 
-- 在`Overview`里面，当你双击语言名字进入一个新的 view 之后，再回到`Overview`里面，你会发现不能用键盘来移动光标了。这大概是**Sublime Text**本身的一个小 bug 。如果你能找到解决这个问题的方法，请贡献一下代码或者将解决方法告诉我(zlang0@163.com)，谢谢。
 
 [Issue](https://github.com/absop/CodeCounter/issues)
 

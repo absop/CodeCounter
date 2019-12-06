@@ -100,8 +100,6 @@ Other settings
 
 - double-clicking language names will always create a new view, even if there is same one has exists.
 
-- In a `Overview` view, after you have double-clicked a language name and got into a new view, back into the `Overview` view, you will meet some problems of moving cursor by keyboard. I think this is probably a little bug of **Sublime Text** itself. If you have more knowledge about this, please let me know (zlang0@163.com), thanks!
-
 [Issue](https://github.com/absop/CodeCounter/issues)
 
 

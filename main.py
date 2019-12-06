@@ -376,10 +376,10 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
             pt = view.window_to_text((event["x"], event["y"]))
             if view.settings().has("code_detail"):
                 if CodeCounterViewsManager.try_open_file(view, pt):
-                    return ("drag_select", {"event": event})
+                    return ("drag_select", args)
             elif view.settings().has("code_overview"):
                 if CodeCounterViewsManager.try_detail(view, pt):
-                    return ("drag_select", {"event": event})
+                    return ("drag_select", args)
 
 
 def configure_code_counter(settings):

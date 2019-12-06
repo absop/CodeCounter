@@ -1,0 +1,5 @@
+v3.0.0 (2019.12.06)
+------------------
+
+# New
+- Fix a little bug of mouse double-clicking.
