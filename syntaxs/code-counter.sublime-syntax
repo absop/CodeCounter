@@ -3,21 +3,21 @@
 # See http://www.sublimetext.com/docs/3/syntax.html
 scope: text.code-counter
 
+variables:
+  regex_path: (\w:)?[^\"\n:|*<?>]+
+  regex_ident: (([A-Za-z0-9_+-]+\s*)+)
+  regex_2cols: ([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)│\s*([0-9]+)
+
+  tab_caption: \s*(Size)│\s*(Files)│\s*(Lines)
+  tab_content: \s*{{regex_2cols}}│\s*([0-9]+)
+
 contexts:
   main:
-    - include: header
-    - include: thread
-    - include: items
-    - include: total
-    - include: special-name
-    - include: paths
-
-  header:
-    - match: (ROOTDIR)(:)(\s+((\w:)?([^\"\n:|*<?>])+))?$
+    - match: (ROOTDIR)(:)(\s+({{regex_path}}))?$
       captures:
         1: keyword.rootdir.code-counter
         2: punctuation.separator.code-counter
-        3: variable.path.code-counter
+        3: entity.name.filename.code-counter
 
     - match: (Time)(:)\s*([0-9/:]+)
       captures:
@@ -25,46 +25,75 @@ contexts:
         2: punctuation.separator.code-counter
         3: string.time.code-counter
 
-    - match: (Languages|Size|Files|Lines|Total|Types|Relative Path)
+    - include: tab-header
+
+  tab-header:
+    - match: (Languages)│{{tab_caption}}
       captures:
         1: keyword.title.code-counter
+        2: keyword.title.code-counter
+        3: keyword.title.code-counter
+        4: keyword.title.code-counter
+      push: languages
 
-  thread:
-    - match: ([_]+)$
+    - match: (Types)│{{tab_caption}}
       captures:
-        1: thread.header.code-counter
+        1: keyword.title.code-counter
+        2: keyword.title.code-counter
+        3: keyword.title.code-counter
+        4: keyword.title.code-counter
+      push: filetypes
 
-  items:
-    - match: (((?!Total)[A-Za-z0-9_+-]+\s*)+)\|\s*([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s*([0-9]+)
+  languages:
+    - match: ^═.+
+      pop: true
+
+    - include: summary
+
+    - match: '{{regex_ident}}│{{tab_content}}'
       captures:
-        1: variable.name.language.code-counter
+        1: entity.name.language.code-counter
         3: constant.numeric.code-counter
         4: string.unit.code-counter
         5: constant.numeric.code-counter
         6: constant.numeric.code-counter
 
-  total:
-    - match: ([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s*([0-9]+)
+  filetypes:
+    - match: ^═.+
+      push: paths-caption
+
+    - include: summary
+
+    - match: '{{regex_ident}}│{{tab_content}}'
       captures:
-        1: constant.numeric.code-counter
-        2: string.unit.code-counter
+        1: entity.name.filetype.code-counter
         3: constant.numeric.code-counter
+        4: string.unit.code-counter
+        5: constant.numeric.code-counter
+        6: constant.numeric.code-counter
+
+  summary:
+    - match: (Total)│{{tab_content}}
+      captures:
+        1: keyword.title.code-counter
+        2: constant.numeric.code-counter
+        3: string.unit.code-counter
         4: constant.numeric.code-counter
-
-  special-name:
-    - match: (((?!Total)[A-Za-z0-9_+-]+\s*)+)\|\s*([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s*([0-9]+)
-      captures:
-        1: entity.name.tag.filetype.code-counter
-        3: constant.numeric.code-counter
-        4: string.unit.code-counter
         5: constant.numeric.code-counter
-        6: constant.numeric.code-counter
 
-  paths:
-    - match: ^\s*([0-9]+(?:\.[0-9]+)?)(B|KB|MB|GB)\|\s*([0-9]+)\|\s+((\w:)?([^\"\n:|*<?>])+)$
+  paths-caption:
+    - match: (Size)│\s*(Lines)│\s*(Paths)
+      captures:
+        1: keyword.title.code-counter
+        2: keyword.title.code-counter
+        3: keyword.title.code-counter
+      push: paths-content
+
+  paths-content:
+    - match: ^\s*{{regex_2cols}}│\s+({{regex_path}})$
       captures:
         1: constant.numeric.code-counter
         2: string.unit.code-counter
         3: constant.numeric.code-counter
-        4: meta.path.code-counter
+        4: entity.name.filename.code-counter
 

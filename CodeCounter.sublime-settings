@@ -1,6 +1,7 @@
 {
     // encoding for os file path
     "encoding": "utf-8",
+    // "path_filters": [],
 
     "extensions": {
         "Assembly": ["s", "S"],
@@ -15,13 +16,13 @@
         "Java": ["java"],
         "JavaScript": ["js"],
         "JSON": [
-        	"json",
-        	"sublime-color-scheme",
-        	"sublime-commands",
-        	"sublime-keymap",
+            "json",
+            "sublime-color-scheme",
+            "sublime-commands",
+            "sublime-keymap",
             "sublime-menu",
-        	"sublime-settings",
-        	"sublime-theme"
+            "sublime-settings",
+            "sublime-theme"
         ],
         "Julia": ["jl"],
         "Latex": ["tex"],

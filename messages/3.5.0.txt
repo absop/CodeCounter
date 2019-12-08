@@ -1,0 +1,7 @@
+v3.5.0 (2019.12.08)
+------------------
+
+# News
+- The results table is improved by using tabs;
+- Summary is removed when a table has only one line;
+- Paths are wrapped by borders formed by tabs.

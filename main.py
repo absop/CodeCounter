@@ -9,6 +9,27 @@ from .lib import Loger
 from .lib import counter
 from .lib import strsize
 
+
+singleline = "%20s│%15s│%12s│%12s"
+tabulation = """
+════════════════════╤═══════════════╤════════════╤════════════
+{caption}
+────────────────────┼───────────────┼────────────┼────────────
+{content}
+════════════════════╧═══════════════╧════════════╧════════════
+"""
+summary = """
+────────────────────┼───────────────┼────────────┼────────────
+{}"""
+link_sheet = """
+══════════╤════════╤══════════════════════════════════════════
+      Size│   Lines│  Paths
+──────────┼────────┼──────────────────────────────────────────
+{}
+══════════╧════════╧══════════════════════════════════════════
+"""
+
+
 class CodeCounterToggleLogCommand(sublime_plugin.WindowCommand):
     def run(self):
         Loger.debug = not Loger.debug
@@ -170,7 +191,7 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
 
     @classmethod
     def do_count(cls, rootdir, filter):
-        def store_path(lang_first, type_second, path):
+        def store_path(_lang, _type, _path, relpath):
             """ data structure layout:
             {
                 language-name:  [
@@ -186,49 +207,52 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
             }
             """
             try:
-                nlines = counter.count(path)
+                nlines = counter.count(_path)
             except:
                 nlines = 0
             try:
-                fsize = os.path.getsize(path)
+                fsize = os.path.getsize(_path)
             except:
                 fsize = 0
-            relpath = os.path.relpath(path, rootdir)
 
-            if lang_first not in counting_tree:
-                counting_tree[lang_first] = [
+            if _lang not in counting_tree:
+                counting_tree[_lang] = [
                     0,
                     0,
                     0,
                     {}
                 ]
-            lang_storage = counting_tree[lang_first]
+            lang_storage = counting_tree[_lang]
 
             lang_storage[0] += fsize
             lang_storage[1] += 1
             lang_storage[2] += nlines
-            if type_second not in lang_storage[3]:
-                lang_storage[3][type_second] = []
+            if _type not in lang_storage[3]:
+                lang_storage[3][_type] = []
 
-            lang_storage[3][type_second].append((relpath, nlines, fsize))
+            lang_storage[3][_type].append((relpath, nlines, fsize))
 
-        def handle_file(file, path):
+        def handle_file(file, path, relpath="."):
             if file in cls.language_fullnames:
-                store_path(cls.language_fullnames[file], file, path)
+                _lang = cls.language_fullnames[file]
+                _type = file
             else:
-                ext = os.path.splitext(file)[1].lstrip(".")
-                if ext in cls.language_extensions:
-                    store_path(cls.language_extensions[ext], ext, path)
+                _type = os.path.splitext(file)[1].lstrip(".")
+                if _type not in cls.language_extensions:
+                    return
+                _lang = cls.language_extensions[_type]
+            store_path(_lang, _type, path, relpath)
 
         def walk_dir(dir):
             for file in sorted(os.listdir(dir)):
                 path = os.path.join(dir, file)
-                if not (os.path.exists(path) and filter(path)):
+                relpath = os.path.relpath(path, rootdir)
+                if not (os.path.exists(path) and filter(relpath)):
                     continue
                 if os.path.isdir(path):
                     walk_dir(path)
                 else:
-                    handle_file(file, path)
+                    handle_file(file, path, relpath)
 
 
         counting_tree = {}
@@ -255,27 +279,25 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         total_files_size = 0
         total_files_number = 0
         total_lines_number = 0
-
-        fmt = "%20s|%15s|%12s|%12s\n"
-        header = "ROOTDIR: %s\nTime: %s\n\n\n" % (rootdir, ctime)
-        title = fmt % ("Languages", "Size", "Files", "Lines")
-        thread = "_" * (len(title) - 1) + "\n"
-
-        summary = ""
+        itmes = []
         for lang in sorted(overview_tree):
             tuple4 = overview_tree[lang]
             total_files_size += tuple4[0]
             total_files_number += tuple4[1]
             total_lines_number += tuple4[2]
             sstr = strsize(tuple4[0])
-            summary += fmt % (lang, sstr, tuple4[1], tuple4[2])
+            itmes.append(singleline % (lang, sstr, tuple4[1], tuple4[2]))
 
-        summary += fmt % ("Total",
-            strsize(total_files_size),
-            total_files_number,
-            total_lines_number)
+        caption = singleline % ("Languages", "Size", "Files", "Lines")
+        content = "\n".join(itmes)
+        if len(itmes) > 1:
+            content += summary.format(singleline % ("Total",
+                strsize(total_files_size),
+                total_files_number,
+                total_lines_number))
 
-        overview_text = thread.join([header, title, summary, ""])
+        overview_text = "ROOTDIR: %s\nTime: %s\n\n\n" % (rootdir, ctime)
+        overview_text += tabulation.format(caption=caption, content=content)
 
         view = window.new_file()
         view.assign_syntax("code-counter.sublime-syntax")
@@ -288,40 +310,33 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         view.run_command('append', {'characters': overview_text})
         view.set_scratch(True)
         view.set_read_only(True)
-        cls.load_overview_view(view)
+        cls.add_underline_for_paths(view)
 
     @classmethod
     def detail(cls, view, rootdir, ctime, lang, detail_tree):
         Loger.print("Detail language:", lang)
         fsize, fnumber, lnumber, types = detail_tree
-
-        xxx = max(20, max(len(_type) for _type in types))
-        fmt = "%*s|%15s|%12s|%12s\n"
-
-        header = "ROOTDIR: %s\nTime: %s\n\n\n" % (rootdir, ctime)
-        title = fmt %(xxx, "Types", "Size", "Files", "Lines")
-        total = fmt %(xxx, "Total", strsize(fsize), fnumber, lnumber)
-        thread = "_" * (len(title) - 1) + "\n"
-
-        entrys, links = "", ""
+        itmes, paths = [], []
         for _type in sorted(types):
-            files_size, lines_number = 0, 0
             tuple3s = types[_type]
-            # links += ("\n" + _type + ":\n")
-            for relpath, nlines, fsize in tuple3s:
-                files_size += fsize
-                lines_number += nlines
-                fsize = strsize(fsize)
-                links += "%10s|%8d|  %s\n" % (fsize, nlines, relpath)
+            files_size, lines_number = 0, 0
+            for relpath, nl, fs in tuple3s:
+                files_size += fs
+                lines_number += nl
+                fs = strsize(fs)
+                paths.append("%10s│%8d│  %s" % (fs, nl, relpath))
+            itmes.append(singleline % (_type[:20],
+                strsize(files_size), len(tuple3s), lines_number))
 
-            files_size = strsize(files_size)
-            files_number = len(tuple3s)
-            entrys += fmt %(xxx, _type, files_size, files_number, lines_number)
+        caption = singleline %("Types", "Size", "Files", "Lines")
+        content = "\n".join(itmes)
+        if len(itmes) > 1:
+            content += summary.format(singleline %("Total",
+                strsize(fsize), fnumber, lnumber))
 
-        summary = thread.join([header, title, entrys, total, ""])
-
-        link_title = "%10s|%8s|  %s\n" % ("Size", "Lines", "Relative Path")
-        detail_text = summary + "\n\n\n" + link_title + links
+        detail_text = "ROOTDIR: %s\nTime: %s\n\n\n" % (rootdir, ctime)
+        detail_text += tabulation.format(caption=caption, content=content)
+        detail_text += "\n\n\n" + link_sheet.format("\n".join(paths))
 
         v = view.window().new_file()
         v.assign_syntax("code-counter.sublime-syntax")
@@ -333,36 +348,24 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         v.run_command('append', {'characters': detail_text})
         v.set_scratch(True)
         v.set_read_only(True)
-        cls.load_detail_view(v)
+        cls.add_underline_for_paths(v)
 
     @classmethod
-    def add_regions(cls, view, regions):
-        view.add_regions("underlines", regions,
-            scope="cs.underlines",
+    def add_underline_for_paths(cls, view):
+        regions = view.find_by_selector("entity.name.filename")
+        view.add_regions("code-counter", regions,
+            scope="entity.name.filename",
             flags=sublime.DRAW_NO_FILL|sublime.DRAW_NO_OUTLINE|
                 sublime.DRAW_SOLID_UNDERLINE|sublime.HIDE_ON_MINIMAP)
         cls.underlined_views[view.view_id] = True
 
     @classmethod
-    def load_overview_view(cls, view):
-        regions = view.find_by_selector("thread.header")
-        cls.add_regions(view, regions)
-
-    @classmethod
-    def load_detail_view(cls, view):
-        regions = view.find_by_selector("thread.header")
-        regions.extend(view.find_by_selector("meta.path"))
-        cls.add_regions(view, regions)
-
-    @classmethod
     def try_add_underlines(cls, view):
         if view.view_id in cls.underlined_views:
             return
-        if view.settings().has("code_overview"):
-            cls.load_overview_view(view)
-
-        elif view.settings().has("code_detail"):
-            cls.load_detail_view(view)
+        if (view.settings().has("code_detail") or
+            view.settings().has("code_overview")):
+            cls.add_underline_for_paths(view)
 
     def on_activated(self, view):
         CodeCounterViewsManager.try_add_underlines(view)
@@ -376,10 +379,10 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
             pt = view.window_to_text((event["x"], event["y"]))
             if view.settings().has("code_detail"):
                 if CodeCounterViewsManager.try_open_file(view, pt):
-                    return ("drag_select", args)
+                    return (name, args)
             elif view.settings().has("code_overview"):
                 if CodeCounterViewsManager.try_detail(view, pt):
-                    return ("drag_select", args)
+                    return (name, args)
 
 
 def configure_code_counter(settings):

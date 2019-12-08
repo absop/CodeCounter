@@ -3,28 +3,28 @@
         "keys": ["o"],
         "command": "code_counter_open_file",
         "context": [{
-                "key": "selector", "operator": "equal", "operand": "meta.path.code-counter"
+                "key": "selector", "operator": "equal", "operand": "entity.name.filename.code-counter"
             }]
     },
     {
         "keys": ["enter"],
         "command": "code_counter_open_file",
         "context": [{
-                "key": "selector", "operator": "equal", "operand": "meta.path.code-counter"
+                "key": "selector", "operator": "equal", "operand": "entity.name.filename.code-counter"
             }]
     },
     {
         "keys": ["d"],
         "command": "code_counter_detail_language",
         "context": [{
-                "key": "selector", "operator": "equal", "operand": "text.code-counter"
+                "key": "selector", "operator": "equal", "operand": "entity.name.language.code-counter"
             }]
     },
     {
         "keys": ["enter"],
         "command": "code_counter_detail_language",
         "context": [{
-                "key": "selector", "operator": "equal", "operand": "variable.name.language.code-counter"
+                "key": "selector", "operator": "equal", "operand": "entity.name.language.code-counter"
             }]
     }
 ]

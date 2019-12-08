@@ -14,7 +14,7 @@ contexts:
       captures:
         1: keyword.declaration.files-size
         2: punctuation.separator.files-size
-        3: rootdir.path.files-size
+        3: entity.name.filename.files-size
 
     - match: (PATH)(:)\s+((\w:)?([^\"\n:|*<?>])+)$
       captures:
