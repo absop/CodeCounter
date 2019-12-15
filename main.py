@@ -162,7 +162,6 @@ class CodeCounterOpenFileCommand(sublime_plugin.TextCommand):
 
 
 class CodeCounterViewsManager(sublime_plugin.EventListener):
-    underlined_views = {}
     language_extensions = {}
     language_fullnames = {}
 
@@ -356,22 +355,8 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         view.add_regions("code-counter", regions,
             scope="entity.name.filename",
             flags=sublime.DRAW_NO_FILL|sublime.DRAW_NO_OUTLINE|
-                sublime.DRAW_SOLID_UNDERLINE|sublime.HIDE_ON_MINIMAP)
-        cls.underlined_views[view.view_id] = True
-
-    @classmethod
-    def try_add_underlines(cls, view):
-        if view.view_id in cls.underlined_views:
-            return
-        if (view.settings().has("code_detail") or
-            view.settings().has("code_overview")):
-            cls.add_underline_for_paths(view)
-
-    def on_activated(self, view):
-        CodeCounterViewsManager.try_add_underlines(view)
-
-    def on_load(self, view):
-        CodeCounterViewsManager.try_add_underlines(view)
+                sublime.DRAW_SOLID_UNDERLINE|sublime.HIDE_ON_MINIMAP|
+                sublime.PERSISTENT)
 
     def on_text_command(self, view, name, args):
         if name == "drag_select" and args.get("by", "") == "words":
