@@ -1,7 +1,19 @@
 {
     // encoding for os file path
     "encoding": "utf-8",
+
     // "path_filters": [],
+
+    /* Optional colors:
+     *   red
+     *   pink
+     *   blue
+     *   green
+     *   orange
+     *   purple
+     *   yellow
+     */
+    "underline_color": "null",
 
     "extensions": {
         "Assembly": ["s", "S"],
@@ -35,11 +47,14 @@
         "Python": ["py"],
         "R": ["r"],
         "Ruby": ["rb"],
+        "reStructuredText": ["rst"],
         "Scala": ["scala", "sbt", "sc"],
         "Scheme": ["ss", "scm"],
         "YAML": ["sublime-syntax"]
     },
+
     "fullnames": {
+        "Configure": ["configure"],
         "Makefile": ["Makefile"]
     }
 }

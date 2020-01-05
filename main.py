@@ -62,7 +62,7 @@ class SideBarFilesSizeCommand(sublime_plugin.WindowCommand):
 
         panel = self.window.create_output_panel("Files Size")
         panel.assign_syntax("files-size.sublime-syntax")
-        panel.run_command('append', {'characters': content})
+        panel.run_command("append", {"characters": content})
         self.window.run_command(
                 "show_panel", {"panel": "output.Files Size"})
 
@@ -301,12 +301,13 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         view = window.new_file()
         view.assign_syntax("code-counter.sublime-syntax")
         view.set_name("CodeCounter - Overview")
-        view.settings().set('word_wrap', False)
-        view.settings().set('translate_tabs_to_spaces', True)
+        view.settings().set("font_face", "Lucida Console")
+        view.settings().set("word_wrap", False)
+        view.settings().set("translate_tabs_to_spaces", True)
         view.settings().set("rootdir", rootdir)
         view.settings().set("time", ctime)
         view.settings().set("code_overview", overview_tree)
-        view.run_command('append', {'characters': overview_text})
+        view.run_command("append", {"characters": overview_text})
         view.set_scratch(True)
         view.set_read_only(True)
         cls.add_underline_for_paths(view)
@@ -340,11 +341,12 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
         v = view.window().new_file()
         v.assign_syntax("code-counter.sublime-syntax")
         v.set_name("CodeCounter - %s" % lang)
-        v.settings().set('word_wrap', False)
-        v.settings().set('translate_tabs_to_spaces', True)
+        v.settings().set("font_face", "Lucida Console")
+        v.settings().set("word_wrap", False)
+        v.settings().set("translate_tabs_to_spaces", True)
         v.settings().set("rootdir", rootdir)
         v.settings().set("code_detail", lang)
-        v.run_command('append', {'characters': detail_text})
+        v.run_command("append", {"characters": detail_text})
         v.set_scratch(True)
         v.set_read_only(True)
         cls.add_underline_for_paths(v)
@@ -353,10 +355,8 @@ class CodeCounterViewsManager(sublime_plugin.EventListener):
     def add_underline_for_paths(cls, view):
         regions = view.find_by_selector("entity.name.filename")
         view.add_regions("code-counter", regions,
-            scope="entity.name.filename",
-            flags=sublime.DRAW_NO_FILL|sublime.DRAW_NO_OUTLINE|
-                sublime.DRAW_SOLID_UNDERLINE|sublime.HIDE_ON_MINIMAP|
-                sublime.PERSISTENT)
+            scope=cls.paths_region_scope,
+            flags=cls.paths_region_flags)
 
     def on_text_command(self, view, name, args):
         if name == "drag_select" and args.get("by", "") == "words":
@@ -398,6 +398,20 @@ def configure_code_counter(settings):
                 return None
             language_fullnames[fname] = lang
 
+    scope = {
+        "red": "region.redish",
+        "pink": "region.pinkish",
+        "blue": "region.bluish",
+        "green": "region.greenish",
+        "orange": "region.orangish",
+        "purple": "region.purplish",
+        "yellow": "region.yellowish"
+    }.get(settings.get("underline_color", ""), "entity.name.filename")
+
+    CodeCounterViewsManager.paths_region_scope = scope
+    CodeCounterViewsManager.paths_region_flags = (sublime.DRAW_NO_FILL|
+        sublime.DRAW_NO_OUTLINE|sublime.DRAW_SOLID_UNDERLINE|
+        sublime.HIDE_ON_MINIMAP|sublime.PERSISTENT)
     CodeCounterViewsManager.language_extensions = language_extensions
     CodeCounterViewsManager.language_fullnames = language_fullnames
 
