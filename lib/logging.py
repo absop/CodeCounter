@@ -8,7 +8,7 @@ class Loger:
 
     def print(*args):
         if Loger.debug:
-            print("CodeCounter:", *args)
+            print("%s:" % Loger.employer, *args)
 
     def error(errmsg):
         sublime.error_message(errmsg)
